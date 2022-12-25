@@ -12,10 +12,7 @@
       "js": ["contentScript.js"]
     }
   ],
-  "permissions": ["storage", "scripting"],
-  "host_permissions": [
-    "https://*.tiktok.com/"
-  ],
+  "permissions": ["storage", "scripting", "activeTab"],
   "options_ui": {
     "page": "options.html",
     "open_in_tab": true
