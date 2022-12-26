@@ -1,4 +1,4 @@
-import { getStorageItem } from "./storage";
+import { getStorageItem, addStorageItemChangedListener } from "./storage";
 import { binarySearch } from "./utils";
 
 const videoSelector = 'div[data-e2e="user-liked-item"],div[data-e2e="music-item"],div[data-e2e="user-post-item"]'
@@ -78,14 +78,8 @@ async function markCurrentVideos() {
     markCurrentVideos()
 })();
 
-chrome.storage.onChanged.addListener((changes, area) => {
-    if (area !== "local") return
-
-    for (const [key, value] of Object.entries(changes)) {
-      if (key === "favorites") {
-        favorites = value.newValue
-        markCurrentVideos()
-      }
-    }
-});
+addStorageItemChangedListener("favorites", (newValue) => {
+    favorites = newValue
+    markCurrentVideos()
+})
 

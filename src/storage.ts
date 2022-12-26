@@ -3,6 +3,19 @@ export interface Storage {
   favorites: string[]
 } // eslint-disable-line
 
+export function addStorageItemChangedListener<Key extends keyof Storage>(
+  key: Key,
+  callback: (newValue: Storage[Key]) => void
+) {
+  chrome.storage.onChanged.addListener((changes, areaName) => {
+    if (areaName == "local") {
+      if (key in changes) {
+        callback(changes[key].newValue)
+      }
+    }
+  });
+}
+
 export function getStorageData(): Promise<Storage> {
   return new Promise((resolve, reject) => {
     chrome.storage.local.get(null, (result) => {
