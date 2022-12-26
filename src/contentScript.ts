@@ -1,15 +1,22 @@
-import { isFavorite } from "./favorites";
+import { getStorageItem } from "./storage";
+import { binarySearch } from "./utils";
 
 const videoSelector = 'div[data-e2e="user-liked-item"],div[data-e2e="music-item"],div[data-e2e="user-post-item"]'
+let favorites: string[] = []
 
-function markFavorites(video_divs: Element[] | NodeListOf<Element>) {
+async function markFavorites(video_divs: Element[] | NodeListOf<Element>) {
+
     video_divs.forEach(div => {
         const anchor = div.querySelector('a[href]')
         const urlString = anchor.getAttribute("href")
         const pathComponents = urlString.split('/')
         const id = pathComponents[pathComponents.length - 1]
+
+        if (id === "7161970556839955754") {
+            console.log(`Match. Result: ${binarySearch(id, favorites)}`)
+        }
         
-        if (isFavorite(id)) {
+        if (binarySearch(id, favorites)) {
             const html = div as HTMLElement
             // html.style.cssText = "border: 5px solid blue;"
             html.style.cssText = "opacity: 50%;"
@@ -17,7 +24,7 @@ function markFavorites(video_divs: Element[] | NodeListOf<Element>) {
     });
 }
 
-function addAll(set: { add: (arg0: any) => void; }, list: any) {
+function addAll(set: Set<Element>, list: NodeListOf<Element>) {
     for (const entry of list) {
         set.add(entry);
     }
@@ -49,14 +56,36 @@ const config = { attributes: true, childList: true, subtree: true };
 // Create an observer instance linked to the callback function
 const observer = new MutationObserver((mutationList) => {
     const videos = applySelector(videoSelector, mutationList)
-    markFavorites(videos)
+
+    if (videos.length > 0) {
+        markFavorites(videos)
+    }
 });
 
 // Start observing the target node for configured mutations
 observer.observe(document, config);
 
-const initial_videos = document.querySelectorAll(videoSelector)
+async function markCurrentVideos() {
+    const initial_videos = document.querySelectorAll(videoSelector)
 
-console.time("initial_favs")
-markFavorites(initial_videos)
-console.timeEnd("initial_favs")
+    console.time('Marking Initial Videos')
+    await markFavorites(initial_videos)
+    console.timeEnd('Marking Initial Videos')
+}
+
+(async () => {
+    favorites = await getStorageItem("favorites") // Initialize the favorites
+    markCurrentVideos()
+})();
+
+chrome.storage.onChanged.addListener((changes, area) => {
+    if (area !== "local") return
+
+    for (const [key, value] of Object.entries(changes)) {
+      if (key === "favorites") {
+        favorites = value.newValue
+        markCurrentVideos()
+      }
+    }
+});
+
