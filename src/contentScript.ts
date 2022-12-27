@@ -1,26 +1,20 @@
-import { getStorageItem, addStorageItemChangedListener } from "./storage";
-import { binarySearch } from "./utils";
+import { addStorageItemChangedListener } from "./storage";
 
 const videoSelector = 'div[data-e2e="user-liked-item"],div[data-e2e="music-item"],div[data-e2e="user-post-item"]'
-let favorites: string[] = []
 
 async function markFavorites(video_divs: Element[] | NodeListOf<Element>) {
 
-    video_divs.forEach(div => {
+    video_divs.forEach(async div => {
         const anchor = div.querySelector('a[href]')
         const urlString = anchor.getAttribute("href")
         const pathComponents = urlString.split('/')
         const id = pathComponents[pathComponents.length - 1]
 
-        if (id === "7161970556839955754") {
-            console.log(`Match. Result: ${binarySearch(id, favorites)}`)
-        }
-        
-        if (binarySearch(id, favorites)) {
-            const html = div as HTMLElement
-            // html.style.cssText = "border: 5px solid blue;"
-            html.style.cssText = "opacity: 50%;"
-        }
+        const response = await chrome.runtime.sendMessage({ type: "isFavorite", id: id })
+
+        const html = div as HTMLElement
+        // html.style.cssText = "border: 5px solid blue;"
+        html.style.cssText = response ? "opacity: 50%;" : ""
     });
 }
 
@@ -73,13 +67,7 @@ async function markCurrentVideos() {
     console.timeEnd('Marking Initial Videos')
 }
 
-(async () => {
-    favorites = await getStorageItem("favorites") // Initialize the favorites
-    markCurrentVideos()
-})();
+addStorageItemChangedListener("favorites", () => markCurrentVideos())
 
-addStorageItemChangedListener("favorites", (newValue) => {
-    favorites = newValue
-    markCurrentVideos()
-})
+markCurrentVideos()
 

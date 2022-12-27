@@ -1,4 +1,12 @@
-export function binarySearch(key: string, haystack: string[]): boolean {
+import { addStorageItemChangedListener, getStorageItem } from "./storage";
+
+let favorites : string[] = []
+
+export function isFavorite(id: string) {
+    return binarySearch(id, favorites)
+}
+
+function binarySearch(key: string, haystack: string[]): boolean {
     let start = 0;
     let end = haystack.length - 1;
 
@@ -19,3 +27,12 @@ export function binarySearch(key: string, haystack: string[]): boolean {
 	// key wasn't found
     return false;
 }
+
+(async () => {
+    favorites = await getStorageItem("favorites")
+    console.log("Set favorites")
+})();
+
+addStorageItemChangedListener("favorites", newValue => {
+    favorites = newValue
+})
