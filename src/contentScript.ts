@@ -2,6 +2,90 @@ import { addStorageItemChangedListener } from "./storage";
 
 const videoSelector = 'div[data-e2e="user-liked-item"],div[data-e2e="music-item"],div[data-e2e="user-post-item"]'
 
+let keepScrolling = false
+
+chrome.runtime.onMessage.addListener((message, _sender, response) => {
+    if (message.type == "toggleScrolling")
+    {
+        if (!keepScrolling) {
+            keepScrolling = true
+            scrollToEnd()
+        }
+        else {
+            keepScrolling = false
+        }
+    }
+
+    if (message.type == "fetchVideos") {
+        const video_divs = Array.from(document.querySelectorAll(videoSelector))
+        const urls = video_divs.map(extractUrl)
+        const users = video_divs.map(extractUser)
+        const allUsersEqual = users.every(v => v === users[0])
+
+        const message = {
+            user: allUsersEqual ? users[0].slice(1) : "collection",
+            urls: urls
+        }
+
+        response(message)
+    }
+});
+
+function scrollSlack() {
+    return document.body.scrollHeight - (window.scrollY + window.innerHeight)
+}
+
+async function scrollToEnd() {
+
+    function sleep(ms: number) {
+      return new Promise(resolve => setTimeout(resolve, ms));
+    }
+
+    const MAX_IDLE_WAIT = 2000;
+    const MAX_LOAD_WAIT = 10000;
+
+    while (keepScrolling) {
+
+        let vfis = document.querySelectorAll(videoSelector)
+        const lastVfi = vfis[vfis.length - 1]
+        lastVfi.scrollIntoView({ behavior: 'smooth' })
+
+        const startTime = Date.now()
+
+        let elapsed = 0;
+        let curVfi = lastVfi;
+
+        let maxWaitTime = MAX_IDLE_WAIT
+
+        while (elapsed < maxWaitTime && curVfi === lastVfi)
+        {
+
+            if (maxWaitTime == MAX_IDLE_WAIT && scrollSlack() > 0) {
+                console.log("Wait for videos to load.")
+            }
+
+            if (maxWaitTime == MAX_LOAD_WAIT && scrollSlack() == 0) {
+                console.log("Idling.")
+            }
+
+            maxWaitTime = scrollSlack() > 0 ? MAX_LOAD_WAIT : MAX_IDLE_WAIT
+
+            await sleep(250)
+
+            elapsed = Date.now() - startTime
+            vfis = document.querySelectorAll(videoSelector)
+            curVfi = vfis[vfis.length - 1]
+        }
+
+        if ((maxWaitTime === MAX_IDLE_WAIT && elapsed >= MAX_IDLE_WAIT) || elapsed >= MAX_LOAD_WAIT)
+        {
+            console.log("Scrolling ended.")
+            keepScrolling = false
+            break
+        }
+    }
+}
+
 function extractUrl(div: Element) {
     const anchor = div.querySelector('a[href]')
     const urlString = anchor.getAttribute("href")
@@ -32,14 +116,10 @@ async function markFavorites(video_divs: Element[]) {
 
     const combined = video_divs.map((elem, i) => [elem, users[i], ids[i], isFavs[i]])
 
-    for (const [div, user, id, isFav] of combined) {
+    for (const [div,,, isFav] of combined) {
         const html = div as HTMLElement
         // html.style.cssText = "border: 5px solid blue;"
         html.style.cssText = isFav ? "opacity: 50%;" : ""
-
-        if (isFav) {
-            console.log(`${id} [${user}] is a favorite.`)
-        }
     }
 
     console.timeEnd(`Marking Favorites ${video_divs.length}`)
