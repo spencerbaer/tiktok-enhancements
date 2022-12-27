@@ -1,5 +1,5 @@
 import { initializeStorageWithDefaults } from './storage';
-import { isFavorite } from './favorites';
+import { areFavorites } from './favorites';
 
 chrome.runtime.onInstalled.addListener(async () => {
   // Here goes everything you want to execute after extension initialization
@@ -25,7 +25,7 @@ chrome.storage.onChanged.addListener((changes) => {
 
 chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
   if (message.type == "isFavorite") {
-    const res = isFavorite(message.id)
-    sendResponse(res)
+    areFavorites(message.ids).then(sendResponse)
+    return true
   }
 })

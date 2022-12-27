@@ -4,18 +4,25 @@ const videoSelector = 'div[data-e2e="user-liked-item"],div[data-e2e="music-item"
 
 async function markFavorites(video_divs: Element[] | NodeListOf<Element>) {
 
-    video_divs.forEach(async div => {
+    console.time(`Marking Favorites ${video_divs.length}`)
+
+    const ids = Array.from(video_divs).map(div => {
         const anchor = div.querySelector('a[href]')
         const urlString = anchor.getAttribute("href")
         const pathComponents = urlString.split('/')
         const id = pathComponents[pathComponents.length - 1]
+        return id
+    })
 
-        const response = await chrome.runtime.sendMessage({ type: "isFavorite", id: id })
+    const isFavs = await chrome.runtime.sendMessage({ type: "isFavorite", ids: ids })
 
+    for (const [i, div] of video_divs.entries()) {
         const html = div as HTMLElement
         // html.style.cssText = "border: 5px solid blue;"
-        html.style.cssText = response ? "opacity: 50%;" : ""
-    });
+        html.style.cssText = isFavs[i] ? "opacity: 50%;" : ""
+    }
+
+    console.timeEnd(`Marking Favorites ${video_divs.length}`)
 }
 
 function addAll(set: Set<Element>, list: NodeListOf<Element>) {
@@ -61,10 +68,7 @@ observer.observe(document, config);
 
 async function markCurrentVideos() {
     const initial_videos = document.querySelectorAll(videoSelector)
-
-    console.time('Marking Initial Videos')
     await markFavorites(initial_videos)
-    console.timeEnd('Marking Initial Videos')
 }
 
 addStorageItemChangedListener("favorites", () => markCurrentVideos())
