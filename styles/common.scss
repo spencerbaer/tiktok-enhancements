@@ -1,17 +1,3 @@
-@import 'normalize.css';
+$btn-white-space: nowrap;
 
-body {
-  background-color: #292d3e;
-  color: #ffffff;
-}
-
-.input-group {
-  display: flex;
-
-  margin: 1rem 0;
-
-  flex-direction: row;
-  gap: 1rem;
-
-  align-items: center;
-}
+@import "bootstrap/scss/bootstrap"

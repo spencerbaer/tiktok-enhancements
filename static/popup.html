@@ -1,6 +1,6 @@
 <!doctype html>
 
-<html lang="en">
+<html lang="en" data-bs-theme="dark">
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -9,13 +9,12 @@
 </head>
 
 <body>
+
   <div class="container">
-    <h1>Hello World!</h1>
-
-    <p>Edit <u>static/popup.html</u> to change this page!</p>
-
-    <button id="download" class="button">Download URLs</button>
-    <button id="auto-scroll" class="button">Auto Scroll</button>
+    <div class="vstack gap-2 col-md-5 mx-auto">
+      <button id="download" class="btn btn-primary btn-sm">Download URLs</button>
+      <button id="auto-scroll" class="btn btn-secondary btn-sm">Auto Scroll</button>
+    </div>
   </div>
 
   <script src="popup.js"></script>
