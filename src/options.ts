@@ -4,7 +4,6 @@ import '../styles/options.scss';
 
 const favorites_count = document.getElementById("favorites-count")
 
-const refresh_favorites = document.getElementById("refresh-favorites")
 const clear_button = document.getElementById("clear-liked")
 
 const like_server_input = document.getElementById("liked-video-server")
@@ -26,10 +25,6 @@ upload_file_button.addEventListener('click', () => {
     const file_input = liked_file_input as HTMLInputElement
     const [file] = file_input.files
     updateFromFile(file)
-})
-
-refresh_favorites.addEventListener("click", () => {
-    updateFromRemoteUrl("http://10.0.0.154:3000/tiktok")
 })
 
 function extractIfUrl(input: string | number): string {

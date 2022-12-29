@@ -9,42 +9,43 @@
 </head>
 
 <body>
-  <h1>Options</h1>
+  <main class="container">
+    <h1>Options</h1>
 
-  <h2>Mark Liked Videos</h2>
+    <h2>Mark Liked Videos</h2>
 
-  <p>
-    If you want to see which videos you have liked when browsing by user or by sound, upload a list of your liked videos and the thumbnails of your liked videos will be shown at 
-    a reduced opacity to make them stand out.
+    <p>
+      If you want to see which videos you have liked when browsing by user or by sound, upload a list of your liked videos and the thumbnails of your liked videos will be shown at 
+      a reduced opacity to make them stand out.
 
-    You can supply a URL from which to fetch a list of video URLs or a list of ids, or you can upload a file. 
+      You can supply a URL from which to fetch a list of video URLs or a list of ids, or you can upload a file. 
+      
+      To generate a list of liked videos, navigate to your liked videos, use the "Auto Scroll" button to scroll to the bottom, 
+      and then use the "Download URLs" button to download a list of URLs. Upload them below.
+    </p>
     
-    To generate a list of liked videos, navigate to your liked videos, use the "Auto Scroll" button to scroll to the bottom, 
-    and then use the "Download URLs" button to download a list of URLs. Upload them below.
-  </p>
-  
-  <p>There are currently <span id="favorites-count">?</span> liked videos that have been uploaded.</p>
+    <p>There are currently <span id="favorites-count">?</span> liked videos that have been uploaded.</p>
 
-  <button id="clear-liked">Clear Liked Videos</button>
-  <button id="refresh-favorites">Refresh Favorites</button>
+    <button id="clear-liked">Clear Liked Videos</button>
 
-  <h3>Option 1: Fetch From Server</h3>
+    <h3>Option 1: Fetch From Server</h3>
 
-  <p>Provide a fully-qualified URL, and we will issue a GET request. The expected response is a json array of URLs or ids.</p>
+    <p>Provide a fully-qualified URL, and we will issue a GET request. The expected response is a json array of URLs or ids.</p>
 
-  <div>
-    <input type="text" id="liked-video-server"/>
-    <button id="fetch-videos-button">Fetch</button>
-  </div>
+    <div>
+      <input type="text" id="liked-video-server"/>
+      <button id="fetch-videos-button">Fetch</button>
+    </div>
 
-  <h3>Option 2: Upload a file</h3>
+    <h3>Option 2: Upload a file</h3>
 
-  <p>Upload a plain text file of video URLs or ids. Line-separated.</p>
+    <p>Upload a plain text file of video URLs or ids. Line-separated.</p>
 
-  <div>
-    <input type="file" id="liked-videos-file" accept=".txt,text/plain"/>
-    <button id="upload-liked-videos">Upload</button>
-  </div>
+    <div>
+      <input type="file" id="liked-videos-file" accept=".txt,text/plain"/>
+      <button id="upload-liked-videos">Upload</button>
+    </div>
+  </main>
   
   <script src="options.js"></script>
 </body>
