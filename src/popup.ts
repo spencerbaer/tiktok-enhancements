@@ -1,9 +1,5 @@
 import '../styles/popup.scss';
 
-// document.getElementById('go-to-options').addEventListener('click', () => {
-//   chrome.runtime.openOptionsPage();
-// });
-
 document.getElementById('auto-scroll').addEventListener('click', async () => {
     const [activeTab] = await chrome.tabs.query({ active: true, currentWindow: true })
 

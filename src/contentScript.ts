@@ -108,8 +108,6 @@ function extractUser(div: Element) {
 
 async function markFavorites(video_divs: Element[]) {
 
-    console.time(`Marking Favorites ${video_divs.length}`)
-
     const ids = video_divs.map(extractVideoId)
     const users = video_divs.map(extractUser)
     const isFavs = await chrome.runtime.sendMessage({ type: "isFavorite", ids: ids })
@@ -121,8 +119,6 @@ async function markFavorites(video_divs: Element[]) {
         // html.style.cssText = "border: 5px solid blue;"
         html.style.cssText = isFav ? "opacity: 50%;" : ""
     }
-
-    console.timeEnd(`Marking Favorites ${video_divs.length}`)
 }
 
 function addAll(set: Set<Element>, list: NodeListOf<Element>) {
