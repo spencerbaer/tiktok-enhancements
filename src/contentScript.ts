@@ -59,15 +59,6 @@ async function scrollToEnd() {
 
         while (elapsed < maxWaitTime && curVfi === lastVfi)
         {
-
-            if (maxWaitTime == MAX_IDLE_WAIT && scrollSlack() > 0) {
-                console.log("Wait for videos to load.")
-            }
-
-            if (maxWaitTime == MAX_LOAD_WAIT && scrollSlack() == 0) {
-                console.log("Idling.")
-            }
-
             maxWaitTime = scrollSlack() > 0 ? MAX_LOAD_WAIT : MAX_IDLE_WAIT
 
             await sleep(250)
@@ -79,7 +70,6 @@ async function scrollToEnd() {
 
         if ((maxWaitTime === MAX_IDLE_WAIT && elapsed >= MAX_IDLE_WAIT) || elapsed >= MAX_LOAD_WAIT)
         {
-            console.log("Scrolling ended.")
             keepScrolling = false
             break
         }

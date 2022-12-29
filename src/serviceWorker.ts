@@ -7,7 +7,7 @@ chrome.runtime.onInstalled.addListener(async () => {
   await chrome.storage.local.clear()
 
   await initializeStorageWithDefaults({
-    liked: ['7161970556839955754', '7162425838074531118']
+    liked: []
   });
 
   console.log('Extension successfully installed!');

@@ -18,7 +18,7 @@ function downloadVideos(response: { user: string; urls: string[]; }) {
 
     console.log(`Received ${urls.length} urls for ${user}`)
 
-    const filename = `tt_${user}.txt`
+    const filename = `${user}.txt`
     const payload = urls.join("\n")
 
     const blob = new Blob([payload], { type: "text/plain" });
@@ -27,6 +27,7 @@ function downloadVideos(response: { user: string; urls: string[]; }) {
     chrome.downloads.download({
         url: blobUrl,
         filename: filename,
+        saveAs: user == "collection",
         conflictAction: "prompt"
     });
 }

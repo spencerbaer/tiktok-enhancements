@@ -1,1 +1,5 @@
-@import '@picocss/pico/scss/pico'
+@import '@picocss/pico/scss/pico';
+
+.nowrap {
+    white-space: nowrap;
+}
