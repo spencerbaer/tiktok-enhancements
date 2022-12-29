@@ -4,26 +4,47 @@ import '../styles/options.scss';
 
 const liked_count = document.getElementById("liked-count")
 
-const clear_button = document.getElementById("clear-liked")
+const clear_button = document.getElementById("clear-liked") as HTMLButtonElement
 
-const like_server_input = document.getElementById("liked-video-server")
-const fetch_videos_button = document.getElementById("fetch-videos-button")
+const like_server_input = document.getElementById("liked-video-server") as HTMLInputElement
+const fetch_videos_button = document.getElementById("fetch-videos-button") as HTMLButtonElement
 
-const liked_file_input = document.getElementById("liked-videos-file")
-const upload_file_button = document.getElementById("upload-liked-videos")
+const liked_file_input = document.getElementById("liked-videos-file") as HTMLInputElement
+const upload_file_button = document.getElementById("upload-liked-videos") as HTMLButtonElement
 
 clear_button.addEventListener('click', () => {
     setStorageItem("liked", [])
 });
 
+function evaluateRemoteServerInput() {
+    const value = like_server_input.value.trim()
+
+    try {
+        new URL(value)
+        fetch_videos_button.disabled = false
+    } catch (e) {
+        console.log(e)
+        fetch_videos_button.disabled = true
+    }
+}
+
+like_server_input.addEventListener('input', evaluateRemoteServerInput)
+like_server_input.addEventListener('paste', evaluateRemoteServerInput)
+
 fetch_videos_button.addEventListener('click', () => {
-    const remote_url = (like_server_input as HTMLInputElement).value
+    const remote_url = like_server_input.value.trim()
+
+    setStorageItem("remoteLiked", remote_url)
+
     updateFromRemoteUrl(remote_url)
 })
 
+liked_file_input.addEventListener('change', () => {
+    upload_file_button.disabled = liked_file_input.files.length == 0
+})
+
 upload_file_button.addEventListener('click', () => {
-    const file_input = liked_file_input as HTMLInputElement
-    const [file] = file_input.files
+    const [file] = liked_file_input.files
     updateFromFile(file)
 })
 
@@ -39,8 +60,6 @@ async function updateFromFile(file: File) {
     const lines = content.split("\n")
     const nonEmptyLines = lines.map(l => l.trim()).filter(x => x.length > 0)
     const ids = nonEmptyLines.map(extractIfUrl)
-
-    console.log(ids)
 
     await setStorageItem("liked", ids.sort())
 }
@@ -70,4 +89,10 @@ updateFavoriteCount();
 
 addStorageItemChangedListener("liked", () => {
     updateFavoriteCount()
-})
+});
+
+(async () => {
+    const remoteUrl = await getStorageItem("remoteLiked")
+    like_server_input.value = remoteUrl
+    evaluateRemoteServerInput()
+})();
