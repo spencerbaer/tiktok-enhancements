@@ -1,13 +1,13 @@
 import { initializeStorageWithDefaults } from './storage';
-import { areFavorites } from './favorites';
+import { areLikedVideos } from './liked';
 
 chrome.runtime.onInstalled.addListener(async () => {
   // Here goes everything you want to execute after extension initialization
 
-  // await chrome.storage.local.clear()
+  await chrome.storage.local.clear()
 
   await initializeStorageWithDefaults({
-    favorites: ['7161970556839955754', '7162425838074531118']
+    liked: ['7161970556839955754', '7162425838074531118']
   });
 
   console.log('Extension successfully installed!');
@@ -25,7 +25,7 @@ chrome.storage.onChanged.addListener((changes) => {
 
 chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
   if (message.type == "isFavorite") {
-    areFavorites(message.ids).then(sendResponse)
+    areLikedVideos(message.ids).then(sendResponse)
     return true
   }
 })

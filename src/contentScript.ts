@@ -106,7 +106,7 @@ function extractUser(div: Element) {
     return id
 }
 
-async function markFavorites(video_divs: Element[]) {
+async function markLikedVideos(video_divs: Element[]) {
 
     const ids = video_divs.map(extractVideoId)
     const users = video_divs.map(extractUser)
@@ -155,7 +155,8 @@ const observer = new MutationObserver((mutationList) => {
     const videos = applySelector(videoSelector, mutationList)
 
     if (videos.length > 0) {
-        markFavorites(videos)
+        markLikedVideos
+    (videos)
     }
 });
 
@@ -164,10 +165,11 @@ observer.observe(document, config);
 
 async function markCurrentVideos() {
     const initial_videos = document.querySelectorAll(videoSelector)
-    await markFavorites(Array.from(initial_videos))
+    await markLikedVideos
+(Array.from(initial_videos))
 }
 
-addStorageItemChangedListener("favorites", () => markCurrentVideos())
+addStorageItemChangedListener("liked", () => markCurrentVideos())
 
 markCurrentVideos()
 

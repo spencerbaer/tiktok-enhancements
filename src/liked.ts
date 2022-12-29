@@ -1,9 +1,9 @@
 import { getStorageItem } from "./storage";
 
-export async function areFavorites(ids: string[]) {
-    const favorites = await getStorageItem("favorites")
+export async function areLikedVideos(ids: string[]) {
+    const liked = await getStorageItem("liked")
 
-    return ids.map(id => binarySearch(id, favorites))
+    return ids.map(id => binarySearch(id, liked))
 }
 
 function binarySearch(key: string, haystack: string[]): boolean {

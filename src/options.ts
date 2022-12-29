@@ -1,8 +1,8 @@
-import { getStorageItem, setStorageItem } from './storage';
+import { addStorageItemChangedListener, getStorageItem, setStorageItem } from './storage';
 
 import '../styles/options.scss';
 
-const favorites_count = document.getElementById("favorites-count")
+const liked_count = document.getElementById("liked-count")
 
 const clear_button = document.getElementById("clear-liked")
 
@@ -13,7 +13,7 @@ const liked_file_input = document.getElementById("liked-videos-file")
 const upload_file_button = document.getElementById("upload-liked-videos")
 
 clear_button.addEventListener('click', () => {
-    setStorageItem("favorites", [])
+    setStorageItem("liked", [])
 });
 
 fetch_videos_button.addEventListener('click', () => {
@@ -42,7 +42,7 @@ async function updateFromFile(file: File) {
 
     console.log(ids)
 
-    await setStorageItem("favorites", ids.sort())
+    await setStorageItem("liked", ids.sort())
 }
 
 async function updateFromRemoteUrl(url: string) {
@@ -55,25 +55,19 @@ async function updateFromRemoteUrl(url: string) {
         const response_array: string[] = await response.json()
         const ids = response_array.map(extractIfUrl)
     
-        await setStorageItem("favorites", ids.sort())
+        await setStorageItem("liked", ids.sort())
     } catch(e) {
         console.error(`Failed to fetch liked videos: ${e}`)
     }
 }
 
 async function updateFavoriteCount() {
-    const favorites = await getStorageItem("favorites")
-    favorites_count.innerText = favorites.length.toString()
+    const liked = await getStorageItem("liked")
+    liked_count.innerText = liked.length.toString()
 }
 
 updateFavoriteCount();
 
-chrome.storage.onChanged.addListener((changes, area) => {
-    if (area !== "local") return
-
-    for (const [key] of Object.entries(changes)) {
-      if (key === "favorites") {
-        updateFavoriteCount()
-      }
-    }
-});
+addStorageItemChangedListener("liked", () => {
+    updateFavoriteCount()
+})
