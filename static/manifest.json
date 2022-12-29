@@ -1,6 +1,6 @@
 {
-  "name": "TikTok Enhanced",
-  "description": "Enhancements for TikTok",
+  "name": "Enhancements for TikTok",
+  "description": "A couple of enhancements that make browsing TikTok a little nicer.",
   "version": "0.1.0",
   "manifest_version": 3,
   "background": {
@@ -12,7 +12,7 @@
       "js": ["contentScript.js"]
     }
   ],
-  "permissions": ["storage", "scripting", "activeTab", "downloads"],
+  "permissions": ["storage", "scripting", "activeTab", "downloads", "declarativeContent"],
   "options_ui": {
     "page": "options.html",
     "open_in_tab": true

@@ -6,6 +6,20 @@ chrome.runtime.onInstalled.addListener(async () => {
 
   // await chrome.storage.local.clear()
 
+  // Only show popup on tiktok.com pages.
+  chrome.action.disable();
+  
+  chrome.declarativeContent.onPageChanged.removeRules(undefined, () => {
+    chrome.declarativeContent.onPageChanged.addRules([{
+      conditions: [
+        new chrome.declarativeContent.PageStateMatcher({
+          pageUrl: { hostSuffix: ".tiktok.com" }
+        })
+      ],
+      actions: [ new chrome.declarativeContent.ShowAction() ]
+    }])
+  })
+
   await initializeStorageWithDefaults({
     liked: [],
     remoteLiked: ""
