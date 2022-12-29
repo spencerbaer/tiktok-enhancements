@@ -9,12 +9,41 @@
 </head>
 
 <body>
+  <h1>Options</h1>
 
-  <div id="wrap" class="container">
-    <h1>Options page</h1>
+  <h2>Mark Like Videos</h2>
+
+  <p>
+    If you want to see which videos you have liked when browsing by user or by sound, upload a list of your liked videos and the thumbnails of your liked videos will be shown at 
+    a reduced opacity to make them stand out.
+
+    You can supply a URL from which to fetch a list of video URLs or a list of ids, or you can upload a file. 
     
-    <p>There are <span id="favorites-count">?</span> favorites recorded.</p>
-    <button class="btn btn-primary" id="refresh-favorites">Refresh Favorites</button>
+    To generate a list of liked videos, navigate to your liked videos, use the "Auto Scroll" button to scroll to the bottom, 
+    and then use the "Download URLs" button to download a list of URLs. Upload them below.
+  </p>
+  
+  <p>There are currently <span id="favorites-count">?</span> liked videos that have been uploaded.</p>
+
+  <button id="clear-liked">Clear Liked Videos</button>
+  <button id="refresh-favorites">Refresh Favorites</button>
+
+  <h3>Option 1: Fetch From Server</h3>
+
+  <p>Provide a server address, and we will use a GET request. The expected response is a json array of URLs or ids.</p>
+
+  <div>
+    <input type="text" id="liked-video-server"/>
+    <button id="fetch-video-button">Fetch</button>
+  </div>
+
+  <h3>Option 2: Upload a file</h3>
+
+  <p>Upload a plain text file of video URLs or ids. Line-separated.</p>
+
+  <div>
+    <input type="file" id="liked-video-file"/>
+    <button id="upload-liked-videos">Upload</button>
   </div>
   
   <script src="options.js"></script>
