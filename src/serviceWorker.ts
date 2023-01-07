@@ -22,7 +22,8 @@ chrome.runtime.onInstalled.addListener(async () => {
 
   await initializeStorageWithDefaults({
     liked: [],
-    remoteLiked: ""
+    remoteLiked: "",
+    remoteDest: ""
   });
 
   console.log('Extension successfully installed!');

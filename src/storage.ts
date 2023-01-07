@@ -1,7 +1,8 @@
 // Define your storage data here
 export interface Storage {
   liked: string[],
-  remoteLiked: string
+  remoteLiked: string,
+  remoteDest: string
 } // eslint-disable-line
 
 export function addStorageItemChangedListener<Key extends keyof Storage>(
