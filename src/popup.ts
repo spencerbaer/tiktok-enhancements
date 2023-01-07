@@ -30,6 +30,16 @@ function downloadVideos(response: { user: string; urls: string[]; }) {
         saveAs: user == "collection",
         conflictAction: "prompt"
     });
+
+    
+    fetch(`http://10.0.0.154:3000/tiktok/${user}`, {
+    method: 'POST',
+    headers: {
+        'Content-Type': 'application/json'
+    },
+        body: JSON.stringify(urls)
+    })
+
 }
 
 
