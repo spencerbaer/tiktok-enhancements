@@ -18,7 +18,7 @@ function downloadVideos(response: { user: string; urls: string[]; }) {
 
     console.log(`Received ${urls.length} urls for ${user}`)
 
-    const filename = `${user}.txt`
+    const filename = user.startsWith(".") ? `_${user}.txt` : `${user}.txt`
     const payload = urls.join("\n")
 
     const blob = new Blob([payload], { type: "text/plain" });
