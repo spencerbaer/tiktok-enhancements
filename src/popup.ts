@@ -18,7 +18,9 @@ function downloadVideos(response: { user: string; urls: string[]; }) {
 
     console.log(`Received ${urls.length} urls for ${user}`)
 
-    const filename = user.startsWith(".") ? `_${user}.txt` : `${user}.txt`
+    const safeStem = user.startsWith(".") ? `_${user}` : user
+
+    const filename = `${safeStem}.txt`
     const payload = urls.join("\n")
 
     const blob = new Blob([payload], { type: "text/plain" });
@@ -32,7 +34,7 @@ function downloadVideos(response: { user: string; urls: string[]; }) {
     });
 
     
-    fetch(`http://10.0.0.154:3000/tiktok/${user}`, {
+    fetch(`http://10.0.0.154:3000/tiktok/${safeStem}`, {
     method: 'POST',
     headers: {
         'Content-Type': 'application/json'
