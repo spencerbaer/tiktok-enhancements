@@ -12,6 +12,24 @@
   <main class="container">
     <h1>Options</h1>
 
+    <h2>Download URLs Behavior</h2>
+    <!-- Switches -->
+  <fieldset>
+    <label for="download-url">
+      <input type="checkbox" id="download-url" name="download-url" role="switch">
+      Download URLs file
+    </label>
+    <label for="push-urls">
+      <input type="checkbox" id="push-urls" name="push-urls" role="switch">
+      Push to Server
+    </label>
+  </fieldset>
+
+    <label for="push-url-server">
+      Push Destination
+      <input type="text" id="push-url-server" placeholder="http://www.example.com/some-url" disabled>
+    </label>
+
     <h2>Mark Liked Videos</h2>
 
     <p>
@@ -33,7 +51,12 @@
     <p>Provide a fully-qualified URL, and we will issue a GET request. The expected response is a json array of URLs or ids.</p>
 
     <div>
-      <input type="text" id="liked-video-server"/>
+      <label for="liked-video-server">
+        Liked Video Source
+      <input type="text" id="liked-video-server" name="liked-video-server" placeholder="http://www.example.com/some-url"/>
+
+      </label>
+
       <button id="fetch-videos-button" disabled>Fetch</button>
     </div>
 

@@ -12,24 +12,67 @@ const fetch_videos_button = document.getElementById("fetch-videos-button") as HT
 const liked_file_input = document.getElementById("liked-videos-file") as HTMLInputElement
 const upload_file_button = document.getElementById("upload-liked-videos") as HTMLButtonElement
 
+const download_switch = document.getElementById("download-url") as HTMLInputElement
+const upload_switch = document.getElementById("push-urls") as HTMLInputElement
+
+const upload_dest_input = document.getElementById("push-url-server") as HTMLInputElement
+
+download_switch.addEventListener('change', () => {
+    setStorageItem("shouldDownload", download_switch.checked)
+})
+
+upload_switch.addEventListener('change', () => {
+    setStorageItem("shouldUpload", upload_switch.checked)
+})
+
 clear_button.addEventListener('click', () => {
     setStorageItem("liked", [])
 });
 
+function evaluateUploadInput() {
+    const value = upload_dest_input.value.trim()
+    const is_valid_url = isValidUrl(value)
+
+    if (upload_dest_input.disabled) {
+        upload_dest_input.removeAttribute("aria-invalid")
+    }
+    else {
+        upload_dest_input.setAttribute("aria-invalid", is_valid_url ? "false" : "true")
+    }
+
+    setStorageItem("remoteDest", value)
+}
+
 function evaluateRemoteServerInput() {
     const value = like_server_input.value.trim()
+    const is_valid_url = isValidUrl(value)
 
+    if (value.length == 0) {
+        like_server_input.removeAttribute("aria-invalid")
+    }
+    else {
+        like_server_input.setAttribute("aria-invalid", is_valid_url ? "false" : "true")
+    }
+
+
+    fetch_videos_button.disabled = !is_valid_url
+}
+
+function isValidUrl(value: string) {
     try {
         new URL(value)
-        fetch_videos_button.disabled = false
     } catch (e) {
-        console.log(e)
-        fetch_videos_button.disabled = true
+        return false
     }
+
+    return true
 }
 
 like_server_input.addEventListener('input', evaluateRemoteServerInput)
 like_server_input.addEventListener('paste', evaluateRemoteServerInput)
+
+upload_dest_input.addEventListener('input', evaluateUploadInput)
+upload_dest_input.addEventListener('paste', evaluateUploadInput)
 
 fetch_videos_button.addEventListener('click', () => {
     const remote_url = like_server_input.value.trim()
@@ -83,16 +126,33 @@ async function updateFromRemoteUrl(url: string) {
 async function updateFavoriteCount() {
     const liked = await getStorageItem("liked")
     liked_count.innerText = liked.length.toString()
+
+    clear_button.disabled = liked.length == 0;
 }
 
-updateFavoriteCount();
 
 addStorageItemChangedListener("liked", () => {
     updateFavoriteCount()
 });
 
+addStorageItemChangedListener("shouldUpload", (val) => {
+    upload_dest_input.disabled = !val
+    evaluateUploadInput()
+});
+
 (async () => {
+
+    download_switch.checked = await getStorageItem("shouldDownload")
+    upload_switch.checked = await getStorageItem("shouldUpload")
+    upload_dest_input.disabled = !await getStorageItem("shouldUpload")
+
     const remoteUrl = await getStorageItem("remoteLiked")
     like_server_input.value = remoteUrl
-    evaluateRemoteServerInput()
+    evaluateRemoteServerInput();
+
+    const uploadUrl = await getStorageItem("remoteDest")
+    upload_dest_input.value = uploadUrl
+    evaluateUploadInput();
+    
+    updateFavoriteCount();
 })();

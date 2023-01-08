@@ -2,7 +2,9 @@
 export interface Storage {
   liked: string[],
   remoteLiked: string,
-  remoteDest: string
+  remoteDest: string,
+  shouldDownload: boolean,
+  shouldUpload: boolean,
 } // eslint-disable-line
 
 export function addStorageItemChangedListener<Key extends keyof Storage>(
