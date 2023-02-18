@@ -1,4 +1,5 @@
 import { addStorageItemChangedListener, getStorageItem, setStorageItem } from './storage';
+import { Buffer } from 'buffer';
 
 import '../styles/options.scss';
 
@@ -109,7 +110,14 @@ async function updateFromFile(file: File) {
 
 async function updateFromRemoteUrl(url: string) {
     try {
-        const response = await fetch(url)
+        const remoteurl = new URL(url)
+        const authString = `${remoteurl.username}:${remoteurl.password}`
+
+        const headers: HeadersInit = authString !== ":" ? { 'Authorization': 'Basic ' + Buffer.from(authString).toString('base64') } : {}
+
+        remoteurl.username = ""
+        remoteurl.password = ""
+        const response = await fetch(remoteurl, { headers })
 
         if (!response.ok) {
             console.error(`Failed to fetch liked videos: ${response.status}`)

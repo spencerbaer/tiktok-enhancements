@@ -1,5 +1,6 @@
 import '../styles/popup.scss';
 import { getStorageItem } from './storage';
+import { Buffer } from 'buffer';
 
 document.getElementById('auto-scroll').addEventListener('click', async () => {
     const [activeTab] = await chrome.tabs.query({ active: true, currentWindow: true })
@@ -38,13 +39,19 @@ async function downloadVideos(tabId: number, response: { user: string; urls: str
 
     if (await getStorageItem("shouldUpload") && user !== "collection") {
 
-        const remoteurl = await getStorageItem("remoteDest") + `/${safeStem}`
+        const remoteurl = new URL(await getStorageItem("remoteDest") + `/${safeStem}`)
+
+        const authString = `${remoteurl.username}:${remoteurl.password}`
+
+        const headers: HeadersInit = authString !== ":" ? { 'Authorization': 'Basic ' + Buffer.from(authString).toString('base64') } : {}
+        headers['Content-Type'] = 'application/json'
+
+        remoteurl.username = ""
+        remoteurl.password = ""
 
         fetch(remoteurl, {
                 method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json'
-                },
+                headers: headers,
                     body: JSON.stringify(urls)
                 }
         ).then(res => {
