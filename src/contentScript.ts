@@ -76,21 +76,36 @@ async function scrollToEnd() {
     }
 }
 
-function extractUrl(div: Element) {
+function extractUrl(div: Element, idx: number) {
+
     const anchor = div.querySelector('a[href]')
     const urlString = anchor.getAttribute("href")
+
+    // Check if the urlString does not contain '@'
+    if (!urlString.includes('@')) {
+        const raw = document.getElementById("SIGI_STATE")
+        const cooked = JSON.parse(raw.innerHTML)
+        const id = cooked.ItemList["user-post"].list[idx]
+        const author = cooked.ItemModule[id].author
+
+        const urlString = `https://www.tiktok.com/@${author}/video/${id}`
+
+        return urlString
+    }
+
+    
     return urlString
 }
 
-function extractVideoId(div: Element) {
-    const urlString = extractUrl(div)
+function extractVideoId(div: Element, idx: number) {
+    const urlString = extractUrl(div, idx)
     const pathComponents = urlString.split('/')
     const id = pathComponents[pathComponents.length - 1]
     return id
 }
 
-function extractUser(div: Element) {
-    const urlString = extractUrl(div)
+function extractUser(div: Element, idx: number) {
+    const urlString = extractUrl(div, idx)
     const pathComponents = urlString.split('/')
     const id = pathComponents[3]
     return id
@@ -155,8 +170,7 @@ observer.observe(document, config);
 
 async function markCurrentVideos() {
     const initial_videos = document.querySelectorAll(videoSelector)
-    await markLikedVideos
-(Array.from(initial_videos))
+    await markLikedVideos(Array.from(initial_videos))
 }
 
 addStorageItemChangedListener("liked", () => markCurrentVideos())
