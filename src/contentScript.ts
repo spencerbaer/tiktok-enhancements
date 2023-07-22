@@ -61,7 +61,7 @@ async function scrollToEnd() {
         {
             maxWaitTime = scrollSlack() > 0 ? MAX_LOAD_WAIT : MAX_IDLE_WAIT
 
-            await sleep(250)
+            await sleep(500)
 
             elapsed = Date.now() - startTime
             vfis = document.querySelectorAll(videoSelector)
