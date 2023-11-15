@@ -76,13 +76,14 @@ async function scrollToEnd() {
     }
 }
 
-function extractUrl(div: Element, idx: number) {
+function extractUrl(div: Element) {
 
     const anchor = div.querySelector('a[href]')
     const urlString = anchor.getAttribute("href")
 
     // Check if the urlString does not contain '@'
     if (!urlString.includes('@')) {
+        const idx = Array.from(document.querySelectorAll(videoSelector)).indexOf(div)
         const raw = document.getElementById("SIGI_STATE")
         const cooked = JSON.parse(raw.innerHTML)
         const id = cooked.ItemList["user-post"].list[idx]
@@ -97,15 +98,15 @@ function extractUrl(div: Element, idx: number) {
     return urlString
 }
 
-function extractVideoId(div: Element, idx: number) {
-    const urlString = extractUrl(div, idx)
+function extractVideoId(div: Element) {
+    const urlString = extractUrl(div)
     const pathComponents = urlString.split('/')
     const id = pathComponents[pathComponents.length - 1]
     return id
 }
 
-function extractUser(div: Element, idx: number) {
-    const urlString = extractUrl(div, idx)
+function extractUser(div: Element) {
+    const urlString = extractUrl(div)
     const pathComponents = urlString.split('/')
     const id = pathComponents[3]
     return id
@@ -114,12 +115,11 @@ function extractUser(div: Element, idx: number) {
 async function markLikedVideos(video_divs: Element[]) {
 
     const ids = video_divs.map(extractVideoId)
-    const users = video_divs.map(extractUser)
     const isFavs = await chrome.runtime.sendMessage({ type: "isFavorite", ids: ids })
 
-    const combined = video_divs.map((elem, i) => [elem, users[i], ids[i], isFavs[i]])
+    const combined = video_divs.map((elem, i) => [elem, isFavs[i]])
 
-    for (const [div,,, isFav] of combined) {
+    for (const [div, isFav] of combined) {
         const html = div as HTMLElement
         // html.style.cssText = "border: 5px solid blue;"
         html.style.cssText = isFav ? "opacity: 50%;" : ""
